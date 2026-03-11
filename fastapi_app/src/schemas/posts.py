@@ -15,3 +15,5 @@ class Post(BaseModel):
     is_published: bool = Field(True, description="Опубликовано")
 
     model_config = ConfigDict(from_attributes=True)
+
+
