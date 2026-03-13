@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, MappedColumn
 from datetime import datetime
 
 
-class AuthUser(Base):
+class User(Base):
     __tablename__ = 'auth_user'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
