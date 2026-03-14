@@ -1,38 +1,21 @@
-from pydantic import BaseModel, Field, ConfigDict, validator
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from typing import Optional
 
 
 class CommentBase(BaseModel):
     """Базовая модель комментария"""
-    text: str = Field(..., min_length=1, max_length=1000, description="Текст комментария")
-    post_id: int = Field(..., description="ID поста")
-    author_id: int = Field(..., description="ID автора")
+    text: str = Field(..., min_length=1, max_length=1000)
+    post_id: int = Field(..., gt=0)
+    author_id: int = Field(..., gt=0)  # gt=0 <=> больше нуля
 
 
-class CommentCreate(BaseModel):
-    """Для создания комментария"""
-    text: str = Field(..., min_length=1, max_length=1000, description="Текст комментария")
-    post_id: int = Field(..., description="ID поста")
-    author_id: int = Field(..., description="ID автора")
-
-    @validator('text')
-    def text_not_empty(cls, v):
-        """Проверка что текст не пустой и не состоит из пробелов"""
-        if not v or not v.strip():
-            raise ValueError('Comment text cannot be empty')
-        return v.strip()
+class CommentCreate(CommentBase):
+    """Для создания комментария - все наследуется от базового класса"""
 
 
 class CommentUpdate(BaseModel):
     """Для обновления комментария"""
-    text: Optional[str] = Field(None, min_length=1, max_length=1000, description="Текст комментария")
-
-    @validator('text')
-    def text_not_empty(cls, v):
-        if v is not None and not v.strip():
-            raise ValueError('Comment text cannot be empty')
-        return v.strip() if v else v
+    text: str | None = Field(None, min_length=1, max_length=1000)
 
 
 class Comment(CommentBase):

@@ -1,51 +1,19 @@
-from pydantic import BaseModel, Field, ConfigDict, validator
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from typing import Optional
 
 
 class LocationBase(BaseModel):
     """Базовая модель локации"""
-    name: str = Field(..., max_length=256, description="Название локации")
-    is_published: bool = Field(True, description="Опубликовано")
-
-    @validator('name')
-    def name_not_empty(cls, v):
-        if not v or not v.strip():
-            raise ValueError('Location name cannot be empty')
-        return v.strip()
-
+    name: str = Field(...,min_length=3,  max_length=256)
+    is_published: bool = Field(True)
 
 class LocationCreate(LocationBase):
     """Для создания локации"""
-    @validator('is_published', pre=True)
-    def prevent_string_conversion(cls, v):
-        if isinstance(v, str):
-            raise ValueError('Must be a boolean, not a string')
-        if isinstance(v, int) and not isinstance(v, bool):
-            raise ValueError('Must be a boolean, not an integer')
-        return v
-
 
 class LocationUpdate(BaseModel):
     """Для обновления локации - все поля опциональны"""
-    name: Optional[str] = Field(None, max_length=256, description="Название локации")
-    is_published: Optional[bool] = Field(None, description="Опубликовано")
-
-    @validator('name')
-    def name_not_empty(cls, v):
-        if v is not None and not v.strip():
-            raise ValueError('Location name cannot be empty')
-        return v.strip() if v else v
-
-    @validator('is_published', pre=True)
-    def prevent_string_conversion(cls, v):
-        if v is not None:
-            if isinstance(v, str):
-                raise ValueError('Must be a boolean, not a string')
-            if isinstance(v, int) and not isinstance(v, bool):
-                raise ValueError('Must be a boolean, not an integer')
-        return v
-
+    name: str | None = Field(None, min_length=3, max_length=256)
+    is_published: bool | None = Field(None)
 
 class Location(LocationBase):
     """Для чтения локации из БД"""
