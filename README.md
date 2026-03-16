@@ -1,2 +1,1 @@
-# FastApi_Homework
-
+# Репозиторий для ведения проекта по FastApi
