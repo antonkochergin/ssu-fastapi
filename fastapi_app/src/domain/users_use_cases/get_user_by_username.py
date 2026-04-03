@@ -11,7 +11,23 @@ class GetUserByUsernameUseCase:
 
     async def execute(self, username: str) -> User:
         """Получить пользователя по username"""
-        with self._database.session() as session:
-            user = self._repo.get_by_username(session, username)
-        return User.model_validate(user)
+        try:
+            with self._database.session() as session:
+                user = self._repo.get_by_username(session, username)
 
+                if not user:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Пользователь с username '{username}' не найден"
+                    )
+
+                return User.model_validate(user)
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            print(f"Ошибка при получении пользователя: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Внутренняя ошибка сервера"
+            )
