@@ -1,8 +1,7 @@
-from fastapi import HTTPException, status
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.posts_repo import PostRepository
 from fastapi_app.src.schemas.posts import PostUpdate, Post
-
+from fastapi_app.src.exeptions import AppException, NotFoundException, UnprocessableError, DatabaseException
 
 class UpdatePostUseCase:
     def __init__(self):
@@ -14,32 +13,18 @@ class UpdatePostUseCase:
             with self._database.session() as session:
                 existing_post = self._repo.get_by_id(session, post_id)
                 if not existing_post:
-                    raise HTTPException(
-                        status_code=status.HTTP_404_NOT_FOUND,
-                        detail=f"Пост с ID {post_id} не найден"
-                    )
+                    raise NotFoundException(resource="Пост", field="id", value=post_id)
 
                 if existing_post.author_id != user_id and not is_superuser:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail="Вы можете редактировать только свои посты"
-                    )
+                    raise UnprocessableError(message="Вы можете редактировать только свои посты")
 
                 updated_post = self._repo.update(session, post_id, post_data)
-
                 if not updated_post:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="Не удалось обновить пост"
-                    )
+                    raise DatabaseException(message="Не удалось обновить пост")
 
                 return Post.model_validate(updated_post)
 
-        except HTTPException:
+        except AppException:
             raise
         except Exception as e:
-            print(f"Ошибка при обновлении поста: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Внутренняя ошибка сервера"
-            )
+            raise DatabaseException(message=f"Ошибка обновления: {str(e)}")

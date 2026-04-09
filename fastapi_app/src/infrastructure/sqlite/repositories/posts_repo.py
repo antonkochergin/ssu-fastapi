@@ -5,35 +5,37 @@ from sqlalchemy import desc
 from fastapi_app.src.infrastructure.sqlite.models.posts import Post
 from fastapi_app.src.schemas.posts import PostCreate, PostUpdate
 from datetime import datetime
-
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi_app.src.exeptions import QueryError, IntegrityError
 
 class PostRepository:
     def __init__(self):
         self.model = Post
 
     def get_by_id(self, session: Session, post_id: int) -> Optional[Post]:
-        return session.get(self.model, post_id)
-
-    def get_all(self, session: Session, skip: int = 0, limit: int = 100) -> List[Post]:
-        return session.query(self.model).order_by(
-            desc(self.model.pub_date)
-        ).offset(skip).limit(limit).all()
+        try:
+            return session.get(self.model, post_id)
+        except SQLAlchemyError as e:
+            raise QueryError(message=str(e), table="posts")
 
     def create(self, session: Session, post_data: PostCreate, author_id: int) -> Post:
-        post = self.model(
-            title=post_data.title,
-            text=post_data.text,
-            pub_date=post_data.pub_date,
-            is_published=post_data.is_published,
-            author_id=author_id,
-            category_id=post_data.category_id,
-            location_id=post_data.location_id,
-            image=post_data.image,
-            created_at=datetime.now()
-        )
-        session.add(post)
-        session.flush()
-        return post
+        try:
+            post = self.model(
+                title=post_data.title,
+                text=post_data.text,
+                pub_date=post_data.pub_date,
+                is_published=post_data.is_published,
+                author_id=author_id,
+                category_id=post_data.category_id,
+                location_id=post_data.location_id,
+                image=post_data.image,
+                created_at=datetime.now()
+            )
+            session.add(post)
+            session.flush()
+            return post
+        except SQLAlchemyError as e:
+            raise QueryError(message=str(e), table="posts")
 
     def update(self, session: Session, post_id: int, post_data: PostUpdate) -> Optional[Post]:
         post = self.get_by_id(session, post_id)

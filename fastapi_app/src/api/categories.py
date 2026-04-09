@@ -4,33 +4,39 @@ from fastapi_app.src.domain.categories_use_cases.create_category import CreateCa
 from fastapi_app.src.domain.categories_use_cases.get_category import GetCategoryUseCase
 from fastapi_app.src.domain.categories_use_cases.update_category import UpdateCategoryUseCase
 from fastapi_app.src.domain.categories_use_cases.delete_category import DeleteCategoryUseCase
+from fastapi_app.src.exeptions import AppException
+from .posts import handle_app_exception
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
-
 
 @router.post("/", response_model=Category, status_code=status.HTTP_201_CREATED)
 async def create_category(category_data: CategoryCreate) -> Category:
     """Создать новую категорию"""
-    use_case = CreateCategoryUseCase()
-    return await use_case.execute(category_data=category_data)
+    try:
+        return await CreateCategoryUseCase().execute(category_data)
+    except AppException as e:
+        return handle_app_exception(e)
 
-
-@router.get("/{category_id}", response_model=Category, status_code=status.HTTP_200_OK)
+@router.get("/{category_id}", response_model=Category)
 async def get_category(category_id: int) -> Category:
     """Получить категорию по ID"""
-    use_case = GetCategoryUseCase()
-    return await use_case.execute(category_id=category_id)
+    try:
+        return await GetCategoryUseCase().execute(category_id)
+    except AppException as e:
+        return handle_app_exception(e)
 
-
-@router.put("/{category_id}", response_model=Category, status_code=status.HTTP_200_OK)
+@router.put("/{category_id}", response_model=Category)
 async def update_category(category_id: int, category_data: CategoryUpdate) -> Category:
     """Обновить категорию"""
-    use_case = UpdateCategoryUseCase()
-    return await use_case.execute(category_id=category_id, category_data=category_data)
+    try:
+        return await UpdateCategoryUseCase().execute(category_id, category_data)
+    except AppException as e:
+        return handle_app_exception(e)
 
-
-@router.delete("/{category_id}", status_code=status.HTTP_200_OK)
-async def delete_category(category_id: int) -> dict:
+@router.delete("/{category_id}")
+async def delete_category(category_id: int):
     """Удалить категорию"""
-    use_case = DeleteCategoryUseCase()
-    return await use_case.execute(category_id=category_id)
+    try:
+        return await DeleteCategoryUseCase().execute(category_id)
+    except AppException as e:
+        return handle_app_exception(e)

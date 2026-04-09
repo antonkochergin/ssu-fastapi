@@ -1,8 +1,8 @@
-from fastapi import HTTPException, status
+from passlib.context import CryptContext
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.users_repo import UserRepository
 from fastapi_app.src.schemas.users import UserUpdate, User
-from passlib.context import CryptContext
+from fastapi_app.src.exeptions import AppException, NotFoundException, ConflictError, DatabaseException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -13,57 +13,34 @@ class UpdateUserUseCase:
         self._repo = UserRepository()
 
     async def execute(self, user_id: int, user_data: UserUpdate) -> User:
-        """Обновить данные пользователя"""
         try:
             with self._database.session() as session:
-                # Проверяем, существует ли пользователь
                 existing_user = self._repo.get_by_id(session, user_id)
                 if not existing_user:
-                    raise HTTPException(
-                        status_code=status.HTTP_404_NOT_FOUND,
-                        detail=f"Пользователь с ID {user_id} не найден"
-                    )
+                    raise NotFoundException(resource="Пользователь", field="id", value=user_id)
 
-                # Если обновляется username, проверяем уникальность
                 if user_data.username and user_data.username != existing_user.username:
-                    same_username = self._repo.get_by_username(session, user_data.username)
-                    if same_username:
-                        raise HTTPException(
-                            status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Пользователь с username '{user_data.username}' уже существует"
-                        )
+                    if self._repo.get_by_username(session, user_data.username):
+                        raise ConflictError(resource="User", field="username", value=user_data.username)
 
-                # Если обновляется email, проверяем уникальность
                 if user_data.email and user_data.email != existing_user.email:
-                    same_email = session.query(self._repo.model).filter(
+                    email_exists = session.query(self._repo.model).filter(
                         self._repo.model.email == user_data.email
                     ).first()
-                    if same_email:
-                        raise HTTPException(
-                            status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Пользователь с email '{user_data.email}' уже существует"
-                        )
+                    if email_exists:
+                        raise ConflictError(resource="User", field="email", value=user_data.email)
 
-                # Если обновляется пароль - хешируем
                 if user_data.password:
                     user_data.password = pwd_context.hash(user_data.password)
 
-                # Обновляем пользователя
                 updated_user = self._repo.update(session, user_id, user_data)
 
                 if not updated_user:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="Не удалось обновить пользователя"
-                    )
+                    raise DatabaseException(message="Не удалось обновить данные пользователя в базе")
 
                 return User.model_validate(updated_user)
 
-        except HTTPException:
+        except AppException:
             raise
         except Exception as e:
-            print(f"Ошибка при обновлении пользователя: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Внутренняя ошибка сервера"
-            )
+            raise DatabaseException(message=f"Внутренняя ошибка при обновлении: {str(e)}")

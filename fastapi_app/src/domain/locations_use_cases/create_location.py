@@ -1,7 +1,7 @@
-from fastapi import HTTPException, status
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.locations_repo import LocationRepository
 from fastapi_app.src.schemas.locations import LocationCreate, Location
+from fastapi_app.src.exeptions import AppException, DatabaseException, ConflictError
 
 
 class CreateLocationUseCase:
@@ -12,21 +12,18 @@ class CreateLocationUseCase:
     async def execute(self, location_data: LocationCreate) -> Location:
         try:
             with self._database.session() as session:
-                new_location = self._repo.create(session, location_data)
-
-                if not new_location:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="Не удалось создать локацию"
+                existing = self._repo.get_by_name(session, location_data.name)
+                if existing:
+                    raise ConflictError(
+                        resource="Локация",
+                        field="name",
+                        value=location_data.name
                     )
 
+                new_location = self._repo.create(session, location_data)
                 return Location.model_validate(new_location)
 
-        except HTTPException:
+        except AppException:
             raise
         except Exception as e:
-            print(f"Ошибка при создании локации: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Внутренняя ошибка сервера"
-            )
+            raise DatabaseException(message=str(e))

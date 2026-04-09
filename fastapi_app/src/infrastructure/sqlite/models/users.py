@@ -1,5 +1,5 @@
 from fastapi_app.src.infrastructure.sqlite.database import Base
-from sqlalchemy import String, Boolean, Integer, DateTime
+from sqlalchemy import String, Boolean, Integer, DateTime ,func
 from sqlalchemy.orm import Mapped, mapped_column, MappedColumn
 from datetime import datetime
 
@@ -17,6 +17,8 @@ class User(Base):
     is_staff: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     is_superuser: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    date_joined: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     # phone_number: Mapped[str | None] = mapped_column(String(20), nullable=True)
 
     def __repr__(self):

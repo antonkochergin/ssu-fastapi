@@ -1,9 +1,11 @@
-from fastapi import HTTPException, status
+import re
+import logging
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.categories_repo import CategoryRepository
 from fastapi_app.src.schemas.categories import CategoryUpdate, Category
-import re
+from fastapi_app.src.exeptions import AppException, NotFoundException, DatabaseException
 
+logger = logging.getLogger(__name__)
 
 class UpdateCategoryUseCase:
     def __init__(self):
@@ -20,31 +22,19 @@ class UpdateCategoryUseCase:
             with self._database.session() as session:
                 existing_category = self._repo.get_by_id(session, category_id)
                 if not existing_category:
-                    raise HTTPException(
-                        status_code=status.HTTP_404_NOT_FOUND,
-                        detail=f"Категория с ID {category_id} не найдена"
-                    )
+                    raise NotFoundException(resource="Категория", field="id", value=category_id)
 
-                # Генерируем slug если указан title
                 if category_data.title and not category_data.slug:
                     category_data.slug = self._generate_slug(category_data.title)
 
-                # Обновляем категорию без проверки уникальности slug
                 updated_category = self._repo.update(session, category_id, category_data)
-
                 if not updated_category:
-                    raise HTTPException(
-                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="Не удалось обновить категорию"
-                    )
+                    raise DatabaseException(message="Не удалось обновить категорию")
 
                 return Category.model_validate(updated_category)
 
-        except HTTPException:
+        except AppException:
             raise
         except Exception as e:
-            print(f"Ошибка при обновлении категории: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Внутренняя ошибка сервера"
-            )
+            logger.error(f"Ошибка обновления категории: {e}")
+            raise DatabaseException(message="Внутренняя ошибка сервера при обновлении")
