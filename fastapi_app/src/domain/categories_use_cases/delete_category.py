@@ -1,6 +1,6 @@
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.categories_repo import CategoryRepository
-from fastapi_app.src.exeptions import AppException, NotFoundException, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, NotFoundException, DatabaseException
 
 class DeleteCategoryUseCase:
     def __init__(self):

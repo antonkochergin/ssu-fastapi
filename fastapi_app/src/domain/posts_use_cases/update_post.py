@@ -1,7 +1,7 @@
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.posts_repo import PostRepository
 from fastapi_app.src.schemas.posts import PostUpdate, Post
-from fastapi_app.src.exeptions import AppException, NotFoundException, UnprocessableError, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, NotFoundException, UnprocessableError, DatabaseException
 
 class UpdatePostUseCase:
     def __init__(self):

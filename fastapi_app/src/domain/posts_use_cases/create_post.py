@@ -4,7 +4,7 @@ from fastapi_app.src.infrastructure.sqlite.repositories.posts_repo import PostRe
 from fastapi_app.src.schemas.posts import PostCreate, Post
 from fastapi_app.src.infrastructure.sqlite.models.categories import Category
 from fastapi_app.src.infrastructure.sqlite.models.locations import Location
-from fastapi_app.src.exeptions import AppException, ValidationError, NotFoundException, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, ValidationError, NotFoundException, DatabaseException
 
 logger = logging.getLogger(__name__)
 

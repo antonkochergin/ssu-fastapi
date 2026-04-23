@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi_app.src.infrastructure.sqlite.models.locations import Location
 from fastapi_app.src.schemas.locations import LocationCreate, LocationUpdate
-from fastapi_app.src.exeptions import QueryError
+from fastapi_app.src.core.exeptions.exceptions import QueryError
 from datetime import datetime
 
 class LocationRepository:

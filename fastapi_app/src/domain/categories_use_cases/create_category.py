@@ -2,7 +2,7 @@ import re
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.categories_repo import CategoryRepository
 from fastapi_app.src.schemas.categories import CategoryCreate, Category
-from fastapi_app.src.exeptions import AppException, ConflictError, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, ConflictError, DatabaseException
 
 class CreateCategoryUseCase:
     def __init__(self):

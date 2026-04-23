@@ -1,7 +1,7 @@
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.locations_repo import LocationRepository
 from fastapi_app.src.schemas.locations import LocationCreate, Location
-from fastapi_app.src.exeptions import AppException, DatabaseException, ConflictError
+from fastapi_app.src.core.exeptions.exceptions import AppException, DatabaseException, ConflictError
 
 
 class CreateLocationUseCase:

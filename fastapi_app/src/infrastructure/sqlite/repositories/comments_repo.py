@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi_app.src.infrastructure.sqlite.models.comments import Comment
 from fastapi_app.src.schemas.comments import CommentCreate, CommentUpdate
-from fastapi_app.src.exeptions import QueryError
+from fastapi_app.src.core.exeptions.exceptions import QueryError
 from datetime import datetime
 
 class CommentRepository:

@@ -1,6 +1,6 @@
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.locations_repo import LocationRepository
-from fastapi_app.src.exeptions import AppException, NotFoundException, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, NotFoundException, DatabaseException
 
 class DeleteLocationUseCase:
     def __init__(self):

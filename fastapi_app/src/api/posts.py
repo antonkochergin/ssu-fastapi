@@ -1,12 +1,12 @@
 # fastapi_app/src/api/posts.py
-from fastapi import APIRouter, status, Query
+from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from fastapi_app.src.schemas.posts import Post, PostCreate, PostUpdate
 from fastapi_app.src.domain.posts_use_cases.create_post import CreatePostUseCase
 from fastapi_app.src.domain.posts_use_cases.get_post import GetPostUseCase
 from fastapi_app.src.domain.posts_use_cases.update_post import UpdatePostUseCase
 from fastapi_app.src.domain.posts_use_cases.delete_post import DeletePostUseCase
-from fastapi_app.src.exeptions import AppException
+from fastapi_app.src.core.exeptions.exceptions import AppException
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 def handle_app_exception(exc: AppException) -> JSONResponse:

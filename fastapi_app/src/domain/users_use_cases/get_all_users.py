@@ -2,7 +2,7 @@ from typing import List
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.users_repo import UserRepository
 from fastapi_app.src.schemas.users import User
-from fastapi_app.src.exeptions import AppException, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, DatabaseException
 
 class GetAllUsersUseCase:
     def __init__(self):

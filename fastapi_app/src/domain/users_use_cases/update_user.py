@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.users_repo import UserRepository
 from fastapi_app.src.schemas.users import UserUpdate, User
-from fastapi_app.src.exeptions import AppException, NotFoundException, ConflictError, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, NotFoundException, ConflictError, DatabaseException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -1,12 +1,12 @@
 # src/infrastructure/sqlite/repositories/post.py
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import desc
 from fastapi_app.src.infrastructure.sqlite.models.posts import Post
 from fastapi_app.src.schemas.posts import PostCreate, PostUpdate
 from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi_app.src.exeptions import QueryError, IntegrityError
+from fastapi_app.src.core.exeptions.exceptions import QueryError
+
 
 class PostRepository:
     def __init__(self):

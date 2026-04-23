@@ -4,7 +4,7 @@ from fastapi_app.src.domain.locations_use_cases.create_location import CreateLoc
 from fastapi_app.src.domain.locations_use_cases.get_location import GetLocationUseCase
 from fastapi_app.src.domain.locations_use_cases.update_location import UpdateLocationUseCase
 from fastapi_app.src.domain.locations_use_cases.delete_location import DeleteLocationUseCase
-from fastapi_app.src.exeptions import AppException
+from fastapi_app.src.core.exeptions.exceptions import AppException
 from .posts import handle_app_exception
 
 router = APIRouter(prefix="/locations", tags=["Locations"])

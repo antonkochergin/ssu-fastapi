@@ -4,7 +4,7 @@ from fastapi_app.src.domain.categories_use_cases.create_category import CreateCa
 from fastapi_app.src.domain.categories_use_cases.get_category import GetCategoryUseCase
 from fastapi_app.src.domain.categories_use_cases.update_category import UpdateCategoryUseCase
 from fastapi_app.src.domain.categories_use_cases.delete_category import DeleteCategoryUseCase
-from fastapi_app.src.exeptions import AppException
+from fastapi_app.src.core.exeptions.exceptions import AppException
 from .posts import handle_app_exception
 
 router = APIRouter(prefix="/categories", tags=["Categories"])

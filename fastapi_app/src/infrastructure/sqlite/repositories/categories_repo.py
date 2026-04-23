@@ -1,9 +1,9 @@
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi_app.src.infrastructure.sqlite.models.categories import Category
 from fastapi_app.src.schemas.categories import CategoryCreate, CategoryUpdate
-from fastapi_app.src.exeptions import QueryError
+from fastapi_app.src.core.exeptions.exceptions import QueryError
 from datetime import datetime
 
 class CategoryRepository:

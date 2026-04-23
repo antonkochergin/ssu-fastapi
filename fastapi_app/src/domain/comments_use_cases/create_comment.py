@@ -1,7 +1,7 @@
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.comments_repo import CommentRepository
 from fastapi_app.src.schemas.comments import CommentCreate, Comment
-from fastapi_app.src.exeptions import AppException, DatabaseException
+from fastapi_app.src.core.exeptions.exceptions import AppException, DatabaseException
 
 class CreateCommentUseCase:
     def __init__(self):

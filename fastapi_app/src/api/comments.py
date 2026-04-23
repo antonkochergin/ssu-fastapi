@@ -4,7 +4,7 @@ from fastapi_app.src.domain.comments_use_cases.get_comment import GetCommentUseC
 from fastapi_app.src.domain.comments_use_cases.create_comment import CreateCommentUseCase
 from fastapi_app.src.domain.comments_use_cases.update_comment import UpdateCommentUseCase
 from fastapi_app.src.domain.comments_use_cases.delete_comment import DeleteCommentUseCase
-from fastapi_app.src.exeptions import AppException
+from fastapi_app.src.core.exeptions.exceptions import AppException
 from .posts import handle_app_exception
 
 router = APIRouter(prefix="/comments", tags=["Comments"])

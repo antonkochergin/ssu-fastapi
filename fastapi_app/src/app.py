@@ -6,6 +6,7 @@ from .api.locations import router as locations_router
 from .api.comments import router as comments_router
 from .api.posts import router as posts_router
 from .api.users import router as users_router
+from src.api.auth import router as auth_router
 
 
 def create_app() -> FastAPI:
@@ -20,11 +21,19 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+
     # Подключение всех роутеров
     app.include_router(categories_router, prefix="/categories", tags=["Categories"])
     app.include_router(locations_router, prefix="/locations", tags=["Locations"])
     app.include_router(comments_router, prefix="/comments", tags=["Comments"])
     app.include_router(posts_router, prefix="/posts", tags=["Posts"])
     app.include_router(users_router, prefix="/users", tags=["Users"])
+    app.include_router(auth_router, prefix="/blog")
 
+    print("\n=== ЗАРЕГИСТРИРОВАННЫЕ МАРШРУТЫ ===")
+    for route in app.routes:
+        if hasattr(route, "path"):
+            print(f"{route.methods if hasattr(route, 'methods') else 'ANY'} {route.path}")
+    print("================================\n")
+    
     return app

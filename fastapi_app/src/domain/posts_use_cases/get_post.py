@@ -1,7 +1,7 @@
 from fastapi_app.src.infrastructure.sqlite.database import database
 from fastapi_app.src.infrastructure.sqlite.repositories.posts_repo import PostRepository
 from fastapi_app.src.schemas.posts import Post
-from fastapi_app.src.exeptions import NotFoundException, DatabaseException # Импортируем свои
+from fastapi_app.src.core.exeptions.exceptions import NotFoundException, DatabaseException # Импортируем свои
 
 class GetPostUseCase:
     def __init__(self):
